@@ -1,4 +1,4 @@
-![Proyectos de Python](https://via.placeholder.com/1200x400.png?text=Proyectos+de+Python)  
+![Proyectos de Python](https://github.com/arlotetxu/Python_Projects/blob/main/Designer.png)  
 
 # Proyectos de Python para Aprender 📚🐍
 
