@@ -51,6 +51,20 @@ Map : Diccionario de pares clave-valor.
 
 Firestore infiere el tipo de datos de un campo basado en el valor que se le asigna. Si le asignas un valor de texto, el campo se convertirá automáticamente en String
     """
+
+def add_task(collection):
+    """
+    - Descripción:
+        - Funcion para añadir una nueva tarea a la colección. Se comprueba si la tarea ya existe ademas
+        de otras comprobaciones relacionadas con los valores de prioridad (numerico de 1 a 5) y estado
+        (Pendiente, Completada).
+    - Parámetros:
+        - collection: la colección de la base de datos de firestock.
+    - Retorno:
+        - No
+    """
     # Generamos una lista con todas las descripciones de las tareas.
-    db_task_list= get_field_values(collection, 'state')
-    print(db_task_list)
+    tasks_list = get_field_values(collection, 'Tarea')
+
+    for task in tasks_list:
+        print(task)

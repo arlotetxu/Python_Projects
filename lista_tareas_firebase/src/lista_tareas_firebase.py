@@ -47,14 +47,18 @@ from db_crud import add_task
 from utils import get_field_values
 
 
+
+
+
+
 if  __name__ == '__main__':
     collection = get_collection() # Campo a pasar como argumento a las funciones para operaciones CRUD
     docs = collection.stream()
 
-    data = {"name": "New York", "state": "NY", "country": "USA"}
+    """data = {"name": "New York", "state": "NY", "country": "USA"}
     collection.document('NY').set(data)
 
     for doc in docs:
-        print(f"{doc.id} => {doc.to_dict()}")
+        print(f"{doc.id} => {doc.to_dict()}")"""
 
     add_task(collection)
