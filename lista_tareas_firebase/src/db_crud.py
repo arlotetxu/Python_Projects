@@ -65,6 +65,7 @@ def add_task(collection):
     """
     # Generamos una lista con todas las descripciones de las tareas.
     tasks_list = get_field_values(collection, 'Tarea')
+    full_ids = get_field_values(collection, '')
 
     for task in tasks_list:
         print(task)
