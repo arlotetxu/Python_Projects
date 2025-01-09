@@ -1,5 +1,7 @@
-from colorama import init, Fore, Style
+from colorama import init, Fore, Style, Back
 from utils import get_field_values
+#from inspect import getfile
+from icecream import ic
 
 def add_task(collection):
     """
@@ -12,43 +14,16 @@ def add_task(collection):
     Retorno:
         - No
 
-
-    doc_ref = collection_ref.document("tu_documento")
-    doc_ref.set({
-        "nombre": "Juan",
-        "edad": 30,
-        "activo": True,
-        "fecha_nacimiento": firestore.Timestamp(firestore.datetime.datetime(1990, 1, 1)),
-        "ubicacion": firestore.GeoPoint(40.7128, -74.0060),
-        "hobbies": ["leer", "correr", "cocinar"],
-        "datos_extra": {
-            "ciudad": "New York",
-            "pais": "Estados Unidos"
-        }
-    })
-
-Reemplaza "tu_documento" con el ID del documento que quieres crear.
-
-Define los campos y sus valores con los tipos de datos correspondientes.
-
 Recuerda:
 
 Los tipos de datos en Firestore son:
-
 String : Texto.
-
 Number : Número entero o decimal.
-
 Boolean : Valor verdadero o falso.
-
 Timestamp : Fecha y hora.
-
 Geopoint : Coordenadas geográficas.
-
 Array : Lista de elementos del mismo tipo.
-
 Map : Diccionario de pares clave-valor.
-
 Firestore infiere el tipo de datos de un campo basado en el valor que se le asigna. Si le asignas un valor de texto, el campo se convertirá automáticamente en String
     """
 
@@ -63,9 +38,41 @@ def add_task(collection):
     - Retorno:
         - No
     """
-    # Generamos una lista con todas las descripciones de las tareas.
-    tasks_list = get_field_values(collection, 'Tarea')
-    full_ids = get_field_values(collection, '')
+    # Generamos una lista con todas las descripciones de las tareas y los ids de las mismas.
+    _, tasks_list = get_field_values(collection, 'Tarea')
+    full_ids, _ = get_field_values(collection, 'Tarea')
 
-    for task in tasks_list:
-        print(task)
+    max_id = int(max(full_ids))
+    #ic(type(max_id))
+
+    #Solicitamos información y realizamos comprobaciones
+    while   True:
+        new_task = input("Añada el titulo de la nueva tarea:\n")
+        if  new_task in tasks_list:
+            print(Fore.RED + "El título especificado ya existe en la base de datos. Inténtelo de nuevo.\n" + Style.RESET_ALL)
+            continue
+        break
+    new_desc = input("Añada la descripción para la tarea:\n")
+    while   True:
+        new_prior = input("Añada la prioridad (1: alta - 5: baja):\n")
+        if  not new_prior.isdigit() or not 1 <= int(new_prior) <= 5:
+            print(Back.RED + "Prioridad incorrecta. Por favor, introduzca un número del 1 (alta) al 5 (baja)\n" + Style.RESET_ALL)
+            continue
+        break
+    while   True:
+        new_status = input("Añada el estado de la tarea (P: Pendiente, C: Completada):\n")
+        if  new_status not in ['P', 'C']:
+            print(Back.RED + "Estado incorrecto. Por favor, seleccione un estado válido\n" + Style.RESET_ALL)
+            continue
+        break
+
+    # Añado un nuevo documento
+    collection.document(str(max_id + 1)).set(
+        {
+            'Tarea': new_task,
+            'Descripcion': new_desc,
+            'Prioridad': int(new_prior),
+            'Estado': new_status,
+        }
+    )
+    print(Fore.GREEN + "Tarea añadida correctamente!!\n\n" + Style.RESET_ALL)

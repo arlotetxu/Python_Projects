@@ -48,9 +48,6 @@ from utils import get_field_values
 
 
 
-
-
-
 if  __name__ == '__main__':
     collection = get_collection() # Campo a pasar como argumento a las funciones para operaciones CRUD
     docs = collection.stream()

@@ -11,9 +11,11 @@ def get_field_values(collection, field):
         - values: lista con los diferentes valores obtenidos.
     """
     values = []
+    ids = []
     all_data = collection.stream()
     for data in all_data:
         field_value = data.to_dict().get(field)
         if field_value:
             values.append(field_value)
-    return values
+            ids.append(data.id)
+    return ids, values
