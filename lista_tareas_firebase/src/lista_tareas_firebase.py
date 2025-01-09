@@ -43,7 +43,7 @@ Documentación y ayuda:
 """
 
 from firebase_config import get_collection # Gestiona la conexion a la base de datos
-from db_crud import add_task
+from db_crud import add_task, show_tasks
 from utils import get_field_values
 
 
@@ -58,4 +58,5 @@ if  __name__ == '__main__':
     for doc in docs:
         print(f"{doc.id} => {doc.to_dict()}")"""
 
-    add_task(collection)
+   # add_task(collection)
+    show_tasks(collection)

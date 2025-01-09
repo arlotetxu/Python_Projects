@@ -34,7 +34,7 @@ def add_task(collection):
         de otras comprobaciones relacionadas con los valores de prioridad (numerico de 1 a 5) y estado
         (Pendiente, Completada).
     - Parámetros:
-        - collection: la colección de la base de datos de firestock.
+        - collection: la colección de la base de datos de firestore.
     - Retorno:
         - No
     """
@@ -76,3 +76,36 @@ def add_task(collection):
         }
     )
     print(Fore.GREEN + "Tarea añadida correctamente!!\n\n" + Style.RESET_ALL)
+
+
+def show_tasks(collection):
+    """
+    - Descripción:
+        - Lista todas las tareas o filtradas por estado o prioridad
+    - Parámetros:
+        - collection: la colección de la base de datos de firestore
+    - Retorno:
+        - No
+    2.	Listar tareas:
+	   •	Mostrar todas las tareas con opción de filtrar por estado o prioridad.
+    """
+    while   True:
+        filter_ind = input("""Elija el tipo de filtro:
+            \t0 - Todas las tareas.
+            \t1 - Filtrar por estado.
+            \t2 - Filtrar por prioridad.\n""")
+
+        if  not filter_ind.isdigit() or not 0 <= int(filter_ind) <= 2:
+            print(Back.RED + "Selección no válida. Inténtelo de nuevo\n" + Style.RESET_ALL)
+            continue
+        break
+    if  int(filter_ind) == 0:
+        all_task = list(collection.stream())
+        ic(all_task)
+        for task in sorted(all_task, key=lambda x: x.id, reverse=True):
+            print(f"Tarea: {task.to_dict()['Tarea']}")
+            print(f"Descripción: {task.to_dict()['Descripcion']}")
+            for key, value in task.to_dict().items():
+                if  key not in ['Tarea', 'Descripcion']:
+                    print(f"{key}: {value}")
+            print("========================================")
