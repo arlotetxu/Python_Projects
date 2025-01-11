@@ -1,19 +1,12 @@
+from firebase_admin import firestore
 from colorama import init, Fore, Style, Back
-from utils import get_field_values
+from utils import get_field_values, show_all_db_info, show_filtered_tasks, get_collection_fields
 #from inspect import getfile
+from asyncio.queues import PriorityQueue
 from icecream import ic
 
-def add_task(collection):
-    """
-    Descripción:
-        Añadimos una nueva tarea a la coleccion. Se realizan comprobaciones en los datos introducidos.
-        TODO: Generar un documento tipo json para guardar el id que vamos generando. Utils.py
-        TODO: Comprobar si la tarea añadida ya existe en la tabla de la BD
-    Parámetros:
-        - colection: conexión a la base de datos.
-    Retorno:
-        - No
 
+"""
 Recuerda:
 
 Los tipos de datos en Firestore son:
@@ -86,26 +79,93 @@ def show_tasks(collection):
         - collection: la colección de la base de datos de firestore
     - Retorno:
         - No
-    2.	Listar tareas:
-	   •	Mostrar todas las tareas con opción de filtrar por estado o prioridad.
     """
     while   True:
-        filter_ind = input("""Elija el tipo de filtro:
+        filter_ind = input(Fore.BLUE + """Elija el tipo de filtro:
             \t0 - Todas las tareas.
             \t1 - Filtrar por estado.
-            \t2 - Filtrar por prioridad.\n""")
+            \t2 - Filtrar por prioridad.\n""" + Style.RESET_ALL)
 
         if  not filter_ind.isdigit() or not 0 <= int(filter_ind) <= 2:
             print(Back.RED + "Selección no válida. Inténtelo de nuevo\n" + Style.RESET_ALL)
             continue
         break
     if  int(filter_ind) == 0:
-        all_task = list(collection.stream())
-        ic(all_task)
-        for task in sorted(all_task, key=lambda x: x.id, reverse=True):
-            print(f"Tarea: {task.to_dict()['Tarea']}")
-            print(f"Descripción: {task.to_dict()['Descripcion']}")
-            for key, value in task.to_dict().items():
-                if  key not in ['Tarea', 'Descripcion']:
-                    print(f"{key}: {value}")
-            print("========================================")
+        show_all_db_info(collection)
+
+    elif  int(filter_ind) == 1:
+        #obtenemos los posibles valores
+        _, states = get_field_values(collection, 'Estado')
+        # mostramos los valores
+        print("\n")
+        for index, state in enumerate(states):
+            print(Fore.YELLOW + f"Índice: {index} - {state}" + Style.RESET_ALL)
+        while True:
+            index = input("\nSeleccione el índice del valor a filtrar:")
+            # comprobamos
+            if  not index.isdigit() or not 0 <= int(index) <= len(states) - 1:
+                print(Back.RED + "Índice incorrecto. Inténtelo de nuevo.\n" + Style.RESET_ALL)
+                continue
+            break
+        show_filtered_tasks(collection, 'Estado', states[int(index)])
+
+    elif  int(filter_ind) == 2:
+        #obtenemos los posibles valores
+        _, prior = get_field_values(collection, 'Prioridad')
+        print("\n")
+        while True:
+            prior_s = input("\nSeleccione la prioridad a filtrar (1 - 5): ")
+            # comprobamos
+            if  not prior_s.isdigit() or not 1 <= int(prior_s) <= 5:
+                print(Back.RED + "Prioridad incorrecta. Inténtelo de nuevo.\n" + Style.RESET_ALL)
+                continue
+            break
+        show_filtered_tasks(collection, 'Prioridad', prior_s)
+
+
+def update_task(collection):
+    """
+    - Descripción:
+        - Actualiza el valor de un campo de un documento
+    - Parámetros:
+        - collection: la colección de la base de datos de firestore
+    - Retorno:
+        - No
+    """
+    field_list = get_collection_fields(collection)
+    while   True:
+        print("\n")
+        # Mostramos toda la info de la colección
+        show_all_db_info(collection)
+        id = input("\nSeleccione el ID de la tarea que desea modificar: ")
+        # Comprobamos
+        full_ids, _ = get_field_values(collection, 'Tarea')
+        if  not id.isdigit() or not id in full_ids:
+            print(Back.RED + "El ID seleccionado no es válido. Inténtelo de nuevo." + Style.RESET_ALL)
+            continue
+        # Mostramos los campos del documente
+        for index, field in enumerate(field_list):
+            print(Fore.YELLOW + f"{index} - {field}" + Style.RESET_ALL)
+        field_chosen = input("Seleccione el índice del campo que desea modificar: ")
+        # Comprobamos
+        if not field_chosen.isdigit() or not 0 <= int(field_chosen) <= len(field_list) - 1:
+            print(Back.RED + "Selección no válida. Inténtelo de nuevo." + Style.RESET_ALL)
+            continue
+        field_name = field_list[int(field_chosen)]
+        # Solicitamos el cambio
+        change = input("Introduzca el nuevo valor: ")
+        # Comprobamos
+        if field_list[int(field_chosen)] == 'Prioridad' and (not change.isdigit() or int(change) not in range(1,6)):
+            print(Back.RED + "El valor debe ser un número entre 1 (prioridad alta) y 5 (prioridad baja)."+ Style.RESET_ALL)
+            continue
+        if field_list[int(field_chosen)] == 'Estado' and change not in ['C', 'P']:
+            print(Back.RED + "El valor solo puede ser 'C' (completada) o 'P' (Pendiente)."+ Style.RESET_ALL)
+            continue
+        break
+
+    try:
+        doc_ref = collection.document(id)
+        update = doc_ref.update({field_name: change})
+        print(Fore.GREEN + "Tarea actualizada correctamente." + Style.RESET_ALL)
+    except Exception as e:
+        print(Back.RED + f"Error al actualizar la tarea: {e}" + Style.RESET_ALL)
