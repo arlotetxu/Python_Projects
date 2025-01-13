@@ -43,8 +43,46 @@ Documentación y ayuda:
 """
 
 from firebase_config import get_collection # Gestiona la conexion a la base de datos
-from db_crud import add_task, show_tasks, update_task
+from db_crud import add_task, show_tasks, update_task, delete_task
 from utils import get_field_values
+from colorama import init, Fore, Back, Style
+
+
+def menu(collection):
+    """
+    - Descripción:
+        - Muestra el menú principal al usuario ofreciendole las diferentes acciones a realizar.
+    - Parámetros:
+        - collection: la colección de la base de datos de firestore.
+    - Retorno:
+        - No
+    """
+    while   True:
+        id_chosen = input(Fore.BLUE +
+            """Elija el índice de la acción que desea realizar:
+            1 - Añadir nueva tarea.
+            2 - Mostrar tareas.
+            3 - Actualizar tarea.
+            4 - Borrar tarea.
+            5 - Salir.\n
+            """ + Style.RESET_ALL)
+        if not id_chosen.isdigit() or not 1 <= int(id_chosen) <= 5:
+            print(Back.RED + "El Índice seleccionado no es válido. Inténtelo de nuevo.\n" + Style.RESET_ALL)
+            continue
+        id_chosen = int(id_chosen)
+        if      id_chosen == 1:
+            add_task(collection)
+        elif    id_chosen == 2:
+            show_tasks(collection)
+        elif    id_chosen == 3:
+            update_task(collection)
+        elif    id_chosen == 4:
+            delete_task(collection)
+        elif    id_chosen == 5:
+            print(Fore.GREEN + "Saliendo. Hasta Pronto.\n" + Style.RESET_ALL)
+            break
+    return
+
 
 
 
@@ -52,12 +90,4 @@ if  __name__ == '__main__':
     collection = get_collection() # Campo a pasar como argumento a las funciones para operaciones CRUD
     docs = collection.stream()
 
-    """data = {"name": "New York", "state": "NY", "country": "USA"}
-    collection.document('NY').set(data)
-
-    for doc in docs:
-        print(f"{doc.id} => {doc.to_dict()}")"""
-
-    #add_task(collection)
-    #show_tasks(collection)
-    update_task(collection)
+    menu(collection)

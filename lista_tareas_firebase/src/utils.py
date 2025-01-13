@@ -8,7 +8,7 @@ def get_field_values(collection, field):
         - Obtiene los valores del campo pasado en el parámetro 'field' de la colección.
     - Parámetros:
         - Collection: Coleccion de datos de Firestore.
-        - Field: campo de la colección del que se quieren obtener los valores
+        - field: campo de la colección del que se quieren obtener los valores
     - Retorno:
         - values: lista con los diferentes valores obtenidos.
     """
@@ -43,6 +43,7 @@ def show_all_db_info(collection):
         print(f"Prioridad: {task.to_dict()['Prioridad']}")
         print(f"Estado: {task.to_dict()['Estado']}")
         print("========================================" + Style.RESET_ALL)
+    print("\n")
 
 
 def show_filtered_tasks(collection, filter_field: str, value:str):
@@ -61,11 +62,13 @@ def show_filtered_tasks(collection, filter_field: str, value:str):
     if  not filtered_tasks:
         print(Back.RED + "No hay tareas con la seleccion actual.\n" + Style.RESET_ALL)
     for task in filtered_tasks:
-        print(Fore.YELLOW + f"\nTarea: {task.to_dict()['Tarea']}")
+        print(Fore.YELLOW + f"\nID: {task.id}")
+        print(f"\nTarea: {task.to_dict()['Tarea']}")
         print(f"Descripción: {task.to_dict()['Descripcion']}")
         print(f"Prioridad: {task.to_dict()['Prioridad']}")
         print(f"Estado: {task.to_dict()['Estado']}")
         print("========================================" + Style.RESET_ALL)
+    print("\n")
 
 
 def get_collection_fields(collection):
