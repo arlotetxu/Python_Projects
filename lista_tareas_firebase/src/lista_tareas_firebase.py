@@ -58,6 +58,6 @@ if  __name__ == '__main__':
     for doc in docs:
         print(f"{doc.id} => {doc.to_dict()}")"""
 
-   # add_task(collection)
-   # show_tasks(collection)
+    #add_task(collection)
+    #show_tasks(collection)
     update_task(collection)
