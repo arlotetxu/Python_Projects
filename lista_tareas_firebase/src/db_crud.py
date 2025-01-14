@@ -1,6 +1,6 @@
 from firebase_admin import firestore
 from colorama import init, Fore, Style, Back
-from utils import get_field_values, show_all_db_info, show_filtered_tasks, get_collection_fields
+from utils import get_field_values, show_all_db_info, show_filtered_tasks, get_collection_fields, get_valid_input
 from icecream import ic
 
 
@@ -34,7 +34,6 @@ def add_task(collection):
     full_ids, _ = get_field_values(collection, 'Tarea')
 
     max_id = int(max(full_ids))
-    #ic(type(max_id))
 
     #Solicitamos información y realizamos comprobaciones
     while   True:
@@ -44,18 +43,16 @@ def add_task(collection):
             continue
         break
     new_desc = input("Añada la descripción para la tarea:\n")
-    while   True:
-        new_prior = input("Añada la prioridad (1: alta - 5: baja):\n")
-        if  not new_prior.isdigit() or not 1 <= int(new_prior) <= 5:
-            print(Back.RED + "Prioridad incorrecta. Por favor, introduzca un número del 1 (alta) al 5 (baja)\n" + Style.RESET_ALL)
-            continue
-        break
-    while   True:
-        new_status = input("Añada el estado de la tarea (P: Pendiente, C: Completada):\n")
-        if  new_status not in ['P', 'C']:
-            print(Back.RED + "Estado incorrecto. Por favor, seleccione un estado válido\n" + Style.RESET_ALL)
-            continue
-        break
+
+    # Solicitamos prioridad y comprobamos con la funcion get_valid_input() en utils.py
+    new_prior = get_valid_input("Añada la prioridad (1: alta - 5: baja):\n",
+        lambda x: x.isdigit() and 1<= int(x) <= 5,
+        "Prioridad incorrecta. Por favor, introduzca un número del 1 (alta) al 5 (baja)\n")
+
+    # Solicitamos estado y comprobamos con la funcion get_valid_input() en utils.py
+    new_status = get_valid_input("Añada el estado de la tarea (P: Pendiente, C: Completada):\n",
+        lambda x: x in ['P', 'C'],
+        "Estado incorrecto. Por favor, seleccione un estado válido\n")
 
     # Añado un nuevo documento
     collection.document(str(max_id + 1)).set(

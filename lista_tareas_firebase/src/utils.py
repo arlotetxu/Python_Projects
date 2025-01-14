@@ -86,3 +86,21 @@ def get_collection_fields(collection):
         # Añadimos los campos de cada documento
         field_names.update(doc.to_dict().keys())
     return list(field_names)
+
+
+def get_valid_input(prompt, validation_func, error_msg):
+    """
+    - Descripción:
+        - Solicita una entrada del usuario, la valida, y repite hasta que sea válida.    - Parámetros:
+    - Parámetros:
+        - prompt: Mensaje de solicitud de entrada de datos.
+        - validation_func: la funcion que valida si los datos introducidos son correctos
+        - error_msg: Mensaje de error mostrado en caso de que los datos sean incorrectos
+    - Retorno:
+        - No
+    """
+    while   True:
+        value = input(prompt)
+        if validation_func(value):
+            return value
+        print(Back.RED + error_msg + Style.RESET_ALL)
