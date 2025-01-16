@@ -1,4 +1,5 @@
 import warnings
+from utils_2 import printing_tasks
 from colorama import init, Back, Fore, Style
 warnings.filterwarnings("ignore", category=UserWarning)
 
@@ -37,12 +38,8 @@ def show_all_db_info(collection):
         print(Back.RED + "No hay tareas en la colección.\n" + Style.RESET_ALL)
     #ic(all_tasks)
     for task in sorted(all_tasks, key=lambda x: x.id, reverse=True):
-        print(Fore.YELLOW + f"\nID: {task.id}")
-        print(f"\nTarea: {task.to_dict()['Tarea']}")
-        print(f"Descripción: {task.to_dict()['Descripcion']}")
-        print(f"Prioridad: {task.to_dict()['Prioridad']}")
-        print(f"Estado: {task.to_dict()['Estado']}")
-        print("========================================" + Style.RESET_ALL)
+        # Calling to function to print the tasks
+        printing_tasks(task)
     print("\n")
 
 
@@ -62,12 +59,8 @@ def show_filtered_tasks(collection, filter_field: str, value:str):
     if  not filtered_tasks:
         print(Back.RED + "No hay tareas con la seleccion actual.\n" + Style.RESET_ALL)
     for task in filtered_tasks:
-        print(Fore.YELLOW + f"\nID: {task.id}")
-        print(f"\nTarea: {task.to_dict()['Tarea']}")
-        print(f"Descripción: {task.to_dict()['Descripcion']}")
-        print(f"Prioridad: {task.to_dict()['Prioridad']}")
-        print(f"Estado: {task.to_dict()['Estado']}")
-        print("========================================" + Style.RESET_ALL)
+        # Calling to function to print the tasks
+        printing_tasks(task)
     print("\n")
 
 
