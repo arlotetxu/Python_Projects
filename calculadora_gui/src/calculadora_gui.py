@@ -1,5 +1,7 @@
 import tkinter as tk
 from tkinter import Tk, Entry, Button
+from calc_functions import click_button
+
 
 # Crear ventana principal
 root = tk.Tk()
@@ -39,21 +41,19 @@ buttons = [
     '1', '2', '3', '-',
     'C', '0', '=', '+'
 ]
-
 row_index = 1  # Comienza en la fila 1 (después de la entrada)
 col_index = 0  # Comienza en la columna 0
-
-# Función para manejar los clics en los botones
-def click_button(value):
-    current = screen.get()  # Obtener el texto actual de la entrada
-    screen.delete(0, 'end')  # Limpiar la entrada
-    screen.insert(0, current + value)  # Agregar el nuevo valor al final
 
 for button in buttons:
     # Crear un botón con el texto correspondiente
     btn = Button(root, text=button, width=8, height=2,
-        command=lambda b=button: click_button(b)) # Asignar la función
-    btn.grid(row=row_index, column=col_index)
+        command=lambda b=button: click_button(b, screen)) # Asignar la función
+    """
+        La diferencia es importante porque:
+        1. `command=click_button(button)` ejecuta la función inmediatamente
+        2. `command=lambda b=button: click_button(b)` crea una función que se ejecutará solo cuando se presione el botón
+    """
+    btn.grid(row=row_index, column=col_index, sticky='nsew') # 'nsew' hace que el botón se expanda
 
     # Avanzar a la siguiente posición en el grid
     col_index += 1
