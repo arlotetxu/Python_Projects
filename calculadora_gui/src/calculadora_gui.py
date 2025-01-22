@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import Tk, Entry, Button
-from calc_functions import click_button
+from calc_functions import click_button, key_press
 
 
 # Crear ventana principal
@@ -46,7 +46,7 @@ col_index = 0  # Comienza en la columna 0
 
 for button in buttons:
     # Crear un botón con el texto correspondiente
-    btn = Button(root, text=button, width=8, height=2,
+    btn = Button(root, text=button, width=8, height=2, bg='black', fg='orange',font=("Arial", 14),relief="raised", bd=5,
         command=lambda b=button: click_button(b, screen)) # Asignar la función
     """
         La diferencia es importante porque:
@@ -60,6 +60,8 @@ for button in buttons:
     if col_index > 3:  # Si llegamos a la cuarta columna, pasamos a la siguiente fila
         col_index = 0
         row_index += 1
+
+root.bind("<Key>", lambda event: key_press(event, screen))
 
 # Ejecutar el bucle principal de la interfaz gráfica
 root.mainloop()
